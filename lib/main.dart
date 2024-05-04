@@ -13,6 +13,14 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           title: const Text(appTitle),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                // Tambahkan logika pencarian di sini
+              },
+            ),
+          ],
         ),
         body: const SingleChildScrollView(
           child: Column(
@@ -21,23 +29,11 @@ class MyApp extends StatelessWidget {
                 image: 'img/lele.png',
               ),
               TitleSection(
-                  name: 'Toko Ikan Lele',
-                  location: 'Jalan Janti Kanoman Yogyakarta'),
-              ButtonSection(),
-              TextSection(
-                description:
-                  'Selamat datang di toko ikan lele kami, tempat terbaik untuk menemukan berbagai produk ikan lele berkualitas tinggi!'
-
-'Kami menyediakan ikan lele segar yang dipilih dengan teliti langsung dari peternak lokal terpercaya. Kebersihan, kualitas, dan kesegaran produk kami adalah prioritas utama kami.'
-
-'Di toko kami, Anda akan menemukan berbagai jenis ikan lele, baik segar maupun olahan, seperti ikan lele fillet, ikan lele utuh, dan berbagai produk olahan ikan lele lainnya. Kami juga menyediakan berbagai bumbu dan saus khas untuk memasak ikan lele agar menghasilkan hidangan yang lezat dan bergizi.'
-
-'Selain itu, kami juga menyediakan layanan konsultasi dan tips memasak bagi pelanggan yang ingin belajar lebih banyak tentang cara memasak ikan lele dengan benar.'
-
-'Kunjungi toko kami hari ini dan rasakan kualitas ikan lele terbaik hanya di toko ikan lele kami!'
-
-
+                name: 'Toko Ikan Lele',
+                location: 'Jalan Janti Kanoman Yogyakarta',
               ),
+              ButtonSection(),
+              EditTextSection(),
             ],
           ),
         ),
@@ -46,12 +42,26 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Widget untuk menampilkan gambar
+class ImageSection extends StatelessWidget {
+  const ImageSection({super.key, required this.image});
+
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      image,
+      width: 600,
+      height: 240,
+      fit: BoxFit.cover,
+    );
+  }
+}
+
+// Widget untuk menampilkan judul dan lokasi toko
 class TitleSection extends StatelessWidget {
-  const TitleSection({
-    super.key,
-    required this.name,
-    required this.location,
-  });
+  const TitleSection({super.key, required this.name, required this.location});
 
   final String name;
   final String location;
@@ -66,7 +76,6 @@ class TitleSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
@@ -96,8 +105,10 @@ class TitleSection extends StatelessWidget {
   }
 }
 
+// Widget untuk menampilkan tombol Call, Route, dan Share
 class ButtonSection extends StatelessWidget {
   const ButtonSection({super.key});
+
   @override
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).primaryColor;
@@ -126,6 +137,7 @@ class ButtonSection extends StatelessWidget {
   }
 }
 
+// Widget untuk menampilkan tombol dengan ikon dan teks
 class ButtonWithText extends StatelessWidget {
   const ButtonWithText({
     super.key,
@@ -161,38 +173,64 @@ class ButtonWithText extends StatelessWidget {
   }
 }
 
-class TextSection extends StatelessWidget {
-  const TextSection({
-    super.key,
-    required this.description,
-  });
+// Widget untuk mengedit deskripsi toko
+class EditTextSection extends StatefulWidget {
+  const EditTextSection({super.key});
 
-  final String description;
+  @override
+  State<EditTextSection> createState() => _EditTextSectionState();
+}
+
+class _EditTextSectionState extends State<EditTextSection> {
+  late TextEditingController _controller;
+  late String _description;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    _description =
+        'Selamat datang di toko ikan lele kami, tempat terbaik untuk menemukan berbagai produk ikan lele berkualitas tinggi!';
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _saveText() {
+    setState(() {
+      _description = _controller.text;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(32),
-      child: Text(
-        description,
-        softWrap: true,
+      child: Column(
+        children: [
+          TextField(
+            controller: _controller,
+            decoration: const InputDecoration(
+              labelText: 'Edit Description',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: _saveText,
+            child: const Text('Save Description'),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Description: $_description',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
-    );
-  }
-}
-
-class ImageSection extends StatelessWidget {
-  const ImageSection({super.key, required this.image});
-
-  final String image;
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.asset(
-      image,
-      width: 600,
-      height: 240,
-      fit: BoxFit.cover,
     );
   }
 }
